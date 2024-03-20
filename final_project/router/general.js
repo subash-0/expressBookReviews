@@ -21,6 +21,32 @@ public_users.get('/',function (req, res) {
   return res.status(200).json(bookList);
 });
 
+// Get book details based on ISBN using async/await
+public_users.get('/all',async function (req, res) {
+  let bookList = [];
+  for (let book in books) {
+    bookList.push(books[book]);
+  }
+  if (bookList.length > 0) {
+    return await res.status(200).json(bookList);
+  } else {
+    return res.status(404).json({message: "Books not found"});
+  }
+ 
+});
+//get all book details based on isbn using promises
+public_users.get('/getbooks/:isbn',function (req, res) {
+  return new Promise((resolve, reject) => { 
+    let isbn = req.params.isbn;
+    if (books[isbn]) {
+      resolve(res.status(200).json(books[isbn]));
+    } else {
+      reject(res.status(404).json({message: "Book not found"}));
+    }
+  });
+
+}); 
+
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   const isbn = req.params.isbn;
