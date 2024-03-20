@@ -66,12 +66,14 @@ public_users.get('/title/:title',function (req, res) {
 });
 
 //  Get book review
-public_users.get('/review/:isbn', async function  (req, res) {
+public_users.get('/review/:isbn',  function  (req, res) {
   let isbn = req.params.isbn;
+  let bookReviews = [];
   if (books[isbn]) {
     for (let i in books[isbn].reviews) {
-      return await res.status(200).json(books[isbn].reviews[i]);
+      bookReviews.push(books[isbn].reviews[i]);
     }
+    return  res.status(200).json(bookReviews);
   } else {
     return res.status(404).json({message: "Book's review  not found"});
   }

@@ -48,20 +48,42 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   jwt.verify(token, "access",(err,user)=>{
     username1 = user.username;
   });
-  console.log(username1);
+  let flag = false;
   if (books[isbn]) {
     for(let i in books[isbn].reviews){
       if(books[isbn].reviews[i].username1===username1){
-           books[isbn].reviews.review = review;
-    }else{
+           books[isbn].reviews[i].review = review;
+           flag = true;
+           break;
+    }}
+    
+    if(!flag){
       const reviewId = Object.keys(books[isbn].reviews).length + 1;
       books[isbn].reviews[reviewId] = { username1, review};
     }
    
-    return res.status(200).json({message: "Review added"});
-  } } else {
+    return res.status(200).json({message: "Review added successfully"});
+  } else {
     return res.status(404).json({message: "Book not found"});
   }
+});
+
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  let isbn = req.params.isbn;
+  let username1;
+  token = req.session.authorization['accessToken'];
+  jwt.verify(token, "access",(err,user)=>{
+    username1 = user.username;
+  });
+  if (books[isbn]) {
+    for(let i in books[isbn].reviews){
+      if(books[isbn].reviews[i].username1===username1){
+        delete books[isbn].reviews[i];
+        return res.status(200).json({message: "Review deleted successfully"});
+           break;
+    }}}
+
+
 });
 
 module.exports.authenticated = regd_users;
